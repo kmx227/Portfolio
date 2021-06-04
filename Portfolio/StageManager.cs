@@ -17,7 +17,6 @@ public class StageManager : MonoBehaviour
 
     public int stepCount = 0;
     int totalPlateCount = 0;
-    //int count = 0;
 
     // Start is called before the first frame update
 
@@ -31,11 +30,9 @@ public class StageManager : MonoBehaviour
     public void SettingStage(int p_songNum)
     {
         stepCount = 0;
-        //count = 0;
         currentStage = Instantiate(stageArray[p_songNum], Vector3.zero, Quaternion.identity);
 
         stagePlates = currentStage.GetComponent<Stage>().plates;
-        //fallStagePlates = currentStage.GetComponent<Stage>().fallPlates;
         totalPlateCount = stagePlates.Length;
 
         for (int i = 0; i < totalPlateCount; i++)
@@ -53,17 +50,6 @@ public class StageManager : MonoBehaviour
             StartCoroutine(MovePlateCo(stepCount++));
         }
     }
-
-   /*public void DownPlate()
-    {
-        if (stepCount > 0)
-        {
-            if (count < 10) 
-            {
-                StartCoroutine(FallPlateCo(count++));
-            }
-        }
-    }*/
 
     //코루틴 타일의 움직임 부드럽게
     IEnumerator MovePlateCo(int p_num)
@@ -83,24 +69,4 @@ public class StageManager : MonoBehaviour
         }
         stagePlates[p_num].position = t_destPos;
     }
-
-    /*IEnumerator FallPlateCo(int p_num)
-    {
-
-        //타일 떨어짐
-        Vector3 b_destPos = new Vector3(fallStagePlates[p_num].position.x,
-                                                    fallStagePlates[p_num].position.y - 10f,
-                                                    fallStagePlates[p_num].position.z);
-
-        // 떨어지는 타일의 효과
-        while (Vector3.SqrMagnitude(fallStagePlates[p_num].position - b_destPos) >= 0.001f)
-        {
-            fallStagePlates[p_num].position = Vector3.Lerp(fallStagePlates[p_num].position, b_destPos, Time.deltaTime);
-            yield return null;
-        }
-        fallStagePlates[p_num].position = b_destPos;
-
-    }*/
-
-    //타일 추락 이벤트 꺼 놓음
 }
