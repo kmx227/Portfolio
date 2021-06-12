@@ -77,6 +77,6 @@ public class Change : MonoBehaviour
         this.gameObject.SetActive(false);
         m_TotalSeconds = 60;
 
-        Monster.SetActive(true);
+        //Monster.SetActive(true);
     }
 }

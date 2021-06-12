@@ -208,7 +208,7 @@ public class PlayerMove : MonoBehaviour
     {
         if (theLight)
         {
-            if (onClick)
+            if (onClick && theLight.isClick)
             {
                 if(clickCount == 0)
                 {//theLight = FindObjectOfType<FlashLight>();

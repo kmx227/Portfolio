@@ -23,6 +23,7 @@ public class FlashLight : MonoBehaviour
             {
                 this.gameObject.SetActive(false);
                 count = 0f;
+                isClick = false;
             }
         }
     }
