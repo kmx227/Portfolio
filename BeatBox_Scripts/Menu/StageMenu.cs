@@ -21,6 +21,8 @@ public class StageMenu : MonoBehaviour
 
     [SerializeField] GameObject TitleMenu = null;
     [SerializeField] GameObject SettingMenu = null;
+    [SerializeField] GameObject Btn = null;
+
 
     DataBase_Manager theDatabase;
 
@@ -85,9 +87,8 @@ public class StageMenu : MonoBehaviour
     {
         int t_bpm = songList[currentSong].bpm;
 
-
-
         GameManager.instance.GameStart(currentSong, t_bpm);
         this.gameObject.SetActive(false);
+        Btn.gameObject.SetActive(true);
     }
 }

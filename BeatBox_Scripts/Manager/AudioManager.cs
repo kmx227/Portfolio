@@ -41,6 +41,7 @@ public class AudioManager : MonoBehaviour
             {
                 bgmPlayer.clip = bgm[i].clip;
                 bgmPlayer.Play();
+                bgmPlayer.volume = bgmVolPercent * masterVolPercent;
             }
         }
     }
@@ -63,6 +64,7 @@ public class AudioManager : MonoBehaviour
                     {
                         sfxPlayer[x].clip = sfx[i].clip;
                         sfxPlayer[x].Play();
+                        sfxPlayer[x].volume = effectVolPercent * masterVolPercent;
                         return;
                     }
 

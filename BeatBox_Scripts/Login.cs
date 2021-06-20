@@ -6,6 +6,8 @@ using BackEnd;
 public class Login : MonoBehaviour
 {
     [SerializeField] GameObject goStageUI = null;
+    [SerializeField] GameObject checkID = null;
+    [SerializeField] GameObject Resit_success = null;
     [SerializeField] InputField id = null;
     [SerializeField] InputField pw = null;
 
@@ -27,6 +29,9 @@ public class Login : MonoBehaviour
                  Debug.Log("초기화 실패(인터넷 문제 등등)");
              }
          });
+
+        checkID.SetActive(false);
+        Resit_success.SetActive(false);
     }
 
     private void Update()
@@ -44,7 +49,7 @@ public class Login : MonoBehaviour
         if (bro.IsSuccess())
         {
             Debug.Log("회원가입 완료");
-            this.gameObject.SetActive(false);
+            Resit_success.SetActive(true);
         }
         else
         {
@@ -69,7 +74,19 @@ public class Login : MonoBehaviour
         else
         {
             Debug.Log("로그인 실패");
+            checkID.SetActive(true);
         }
     }
 
+    public void IdCheck()
+    {
+        checkID.SetActive(false);
+    }
+
+    public void Resigt_Success()
+    {
+        Resit_success.SetActive(false);
+        this.gameObject.SetActive(false);
+        goStageUI.SetActive(true);
+    }
 }

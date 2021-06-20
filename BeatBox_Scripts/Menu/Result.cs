@@ -13,8 +13,7 @@ public class Result : MonoBehaviour
     [SerializeField] Text txtMaxCombo = null; // 점수표기해 주기 위해 설정
 
     int currentSong = 0;
-    public GameObject btnMenu;
-    public GameObject btn;
+    public GameObject btnPlay;
 
     public void SetCurrentSong(int p_songNum)
     {
@@ -32,13 +31,11 @@ public class Result : MonoBehaviour
         theCombo = FindObjectOfType<ComboManager>();
         theTiming = FindObjectOfType<TimingManager>();
         theDatabase = FindObjectOfType<DataBase_Manager>();
-        Instantiate(btnMenu);
-        Instantiate(btn);
     }
 
     public void ShowResult()
     {
-        Invoke("IsCanBtn", 5f);
+        btnPlay.gameObject.SetActive(false);
 
         FindObjectOfType<CenterFlame>().ResetMusic();
         AudioManager.instance.StopBGM();
@@ -76,19 +73,11 @@ public class Result : MonoBehaviour
 
     }
 
-    void IsCanBtn()
-    {
-        btnMenu.GetComponent<Button>().interactable = true;
-        btn.GetComponent<Button>().interactable = true;
-    }
-
     public void BtnMainMenu()
     {
         goUI.SetActive(false);
         GameManager.instance.MainMenu();
         theCombo.ResetCombo();
-        btnMenu.GetComponent<Button>().interactable = false;
-        btn.GetComponent<Button>().interactable = false;
     }
 
     public void BtnRetry()
@@ -96,7 +85,6 @@ public class Result : MonoBehaviour
         goUI.SetActive(false);
         GameManager.instance.GameStart(currentSong, 130);
         theCombo.ResetCombo();
-        btn.GetComponent<Button>().interactable = false;
-        btnMenu.GetComponent<Button>().interactable = false;
+        btnPlay.gameObject.SetActive(true);
     }
 }

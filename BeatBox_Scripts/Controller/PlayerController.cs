@@ -67,46 +67,61 @@ public class PlayerController : MonoBehaviour
         if (GameManager.instance.isStartGame)
         {
             CheckFalling();
+        }
+    }
 
-            //방향키를 눌렀을때
-            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
+    public void BtnLeft()
+    {
+        Debug.Log("버튼 눌림");
+        if (canMove && s_canPresskey && !isFalling)
+        {
+            destPos = transform.position + new Vector3(-1, 0, 0); //이동 목표값 계산
+            rotDir = new Vector3(0, 0f, -1); //회전 목표값 계산
+
+            //fakeCube를 회전 후 결과값 저장
+            fakeCube.RotateAround(transform.position, rotDir, spinSpeed);
+            destRot = fakeCube.rotation;
+
+            // 판정 체크
+            if (theTimingManager.CheckTiming())
             {
-                if (canMove && s_canPresskey && !isFalling)
-                {
-                    Calc();
-
-                    // 판정 체크
-                    if (theTimingManager.CheckTiming())
-                    {
-                        //이동구현
-                        StartAction();
-                    }
-                }
+                //이동구현
+                StartAction();
             }
         }
     }
 
-    void Calc()
+    public void BtnRight()
     {
-        //방향 계산(축을 기준으로 계산), getAxisRaw -1,0,1의 값 가짐
-        dir.Set(Input.GetAxisRaw("Vertical"), 0, Input.GetAxisRaw("Horizontal"));
-
-    //목적지 목표값 계산, 키 눌림 중복 방지
-        if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
+        Debug.Log("버튼 눌림");
+        if (canMove && s_canPresskey && !isFalling)
         {
-            destPos = transform.position + new Vector3(-dir.x, 0, dir.z); //이동 목표값 계산
-            rotDir = new Vector3(-dir.z, 0f, -dir.x); //회전 목표값 계산
-            if (Input.GetAxisRaw("Vertical") != 0 && Input.GetAxisRaw("Horizontal") != 0)
+            destPos = transform.position + new Vector3(0, 0, 1); //이동 목표값 계산
+            rotDir = new Vector3(-1, 0f, 0); //회전 목표값 계산
+
+            //fakeCube를 회전 후 결과값 저장
+            fakeCube.RotateAround(transform.position, rotDir, spinSpeed);
+            destRot = fakeCube.rotation;
+
+            // 판정 체크
+            if (theTimingManager.CheckTiming())
             {
-                destPos = transform.position + new Vector3(-1, 0, 0); //이동 목표값 계산
-                rotDir = new Vector3(0f, 0f, -1); //회전 목표값 계산
+                //이동구현
+                StartAction();
             }
         }
+    }
 
+    /*void Calc()
+    {
+        
+        destPos = transform.position + new Vector3(-1, 0, 0); //이동 목표값 계산
+        rotDir = new Vector3(0, 0f, -1); //회전 목표값 계산
+            
         //fakeCube를 회전 후 결과값 저장
         fakeCube.RotateAround(transform.position, rotDir, spinSpeed);
         destRot = fakeCube.rotation;
-    }
+    }*/
 
     void StartAction() {
 
