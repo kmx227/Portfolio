@@ -1,0 +1,21 @@
+IPunObservable
+
+public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(transform.position);
+        }
+        else
+        {
+            notIsMinePosition = (Vector3)stream.ReceiveNext();
+        }
+    } //플레이어의 이동 동기화
+
+[PunRPC] //원격프로시저호출
+    void Flip(float inputX)
+    {
+        transform.localScale = new Vector3(inputX/2, 0.5f, 0.5f);
+    }
+
+view.RPC("Flip", RpcTarget.AllBuffered, InputX) //RPC 사용
