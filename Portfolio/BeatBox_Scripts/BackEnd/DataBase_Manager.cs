@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using BackEnd;
+using BackEnd; //뒤끝 서버
 using LitJson;
 
 public class DataBase_Manager : MonoBehaviour
@@ -18,9 +18,7 @@ public class DataBase_Manager : MonoBehaviour
 
         if (bro.Rows().Count > 0)
         {
-            Debug.Log("!");
             //데이터 업데이트
-            
             string inDate = bro.Rows()[0]["inDate"]["S"].ToString();
             Backend.GameData.Update("Score", inDate, data1, (callback) =>
             {
@@ -45,7 +43,6 @@ public class DataBase_Manager : MonoBehaviour
 
         if (bro.Rows().Count > 0)
         {
-            Debug.Log("!!");
             JsonData t_List = t_data["rows"][0]["Scores"]["L"]; //score를 list형태로 가져옴
             for (int i = 0; i < t_List.Count; i++)
             {

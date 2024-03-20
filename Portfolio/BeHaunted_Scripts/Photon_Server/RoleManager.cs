@@ -66,7 +66,6 @@ public class RoleManager : MonoBehaviour
 
     private void OnEnable()
     {
-        print("여기까지");
         if (PhotonNetwork.IsMasterClient)
         {
             foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
@@ -99,13 +98,10 @@ public class RoleManager : MonoBehaviour
         mixList.Clear();
     }
 
-    void ShuffleArray()
-    {
-        //System.Random _random = new System.Random();
-        //_playerSpawnPoints = _playerSpawnPoints.OrderBy(x => _random.Next()).ToArray();
-        StartCoroutine(RandomRole());
-    }
-
+    /// <summary>
+    /// 인원 수에 따른 랜덤한 역할(학생/마피아) 지정
+    /// </summary>
+    /// <returns></returns>
     IEnumerator RandomRole()
     {
         yield return new WaitUntil(() => _playerSortList.Count == PhotonNetwork.CurrentRoom.PlayerCount);
@@ -151,6 +147,7 @@ public class RoleManager : MonoBehaviour
         }
     }
 
+    //셔플
     private List<T> GetShuffleList<T>(List<T> _list)
     {
         for (int i = _list.Count - 1; i > 0; i--)
@@ -165,6 +162,9 @@ public class RoleManager : MonoBehaviour
         return _list;
     }
 
+    /// <summary>
+    /// 게임 내 방장이 역할을 랜덤으로 리스트 작성 후 배정 - 게임 내 인원 모두가 같은 역할리스트를 갖기 위함
+    /// </summary>
     void MasterSendPlayerInfo()
     {
         string jdataPlayerSortList = JsonUtility.ToJson(new Serialization<int>(_playerSortList));

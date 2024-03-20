@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using BackEnd;
+using BackEnd; //뒤끝서버
+
 public class Login : MonoBehaviour
 {
     [SerializeField] GameObject goStageUI = null;

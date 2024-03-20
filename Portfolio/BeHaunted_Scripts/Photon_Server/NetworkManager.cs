@@ -161,40 +161,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    void OpenChatPannel(bool _isEmergency)
-    {
-        if (_isEmergency)
-        {
-            _emergencyInfoUI[0].SetActive(false);
-            _emergencyInfoUI[1].SetActive(true);
-            _emergency.UseEmergency(true);
-        }
-        else
-        {
-            _emergencyInfoUI[0].SetActive(true);
-            _emergencyInfoUI[1].SetActive(false);
-        }
-
-        AudioSource.PlayClipAtPoint(SoundManager.instance.seManager.EffectSounds[8], _player.transform.position);
-        for(int i=0; i< _missionManager.GetComponent<MissionOpen>().MissionObj.Count; i++)
-        {
-            _missionManager.GetComponent<MissionOpen>().MissionObj[i].SetActive(false);
-        }
-
-        if(_missionManager.GetComponent<MissionOpen>().student != null)
-        {
-            _missionManager.GetComponent<MissionOpen>().PlayerCam.SetActive(true);
-            _missionManager.GetComponent<MissionOpen>().MissionCam.SetActive(false);
-        }
-        _chatPannel.SetActive(true);
-        _isOpenPannel = true;
-        _stateManager._gameState = StateManager.State.OnChatting;
-        _clickProfile.InitProfile();
-        _timer.Reset_Timer();
-        //Cursor.lockState = CursorLockMode.Confined;
-    }
-
     public override void OnConnectedToMaster()
     {
         print("서버접속완료");
@@ -212,6 +178,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 #endif
     }
 
+    /// <summary>
+    /// 방 생성
+    /// </summary>
     public void CreateRoom()
     {
         string _roomNum = GetNum();
@@ -230,7 +199,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    // 방 번호 랜덤 생성
+    /// <summary>
+    /// 방 번호 랜덤 생성
+    /// </summary>
+    /// <returns>방 번호</returns>
     private static string GetNum()
     {
         string _num = "";
@@ -246,6 +218,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         return _num;
     }
 
+    /// <summary>
+    /// 동일한 방 번호 입력 시 입장
+    /// </summary>
     public void JoinRoom()
     {
         if (PhotonNetwork.IsConnected && _nickName.text != "" && _roomInput.text != "")
@@ -256,11 +231,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
         else if(_nickName.text == "")
         {
-            StartCoroutine(FadeFiedl(_nickName));
+            StartCoroutine(FadeField(_nickName));
         }
         else if(_roomInput.text == "")
         {
-            StartCoroutine(FadeFiedl(_roomInput));
+            StartCoroutine(FadeField(_roomInput));
         }
     }
 
@@ -270,12 +245,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
     }
 
-    public void RPCSendMessage()
-    {
-        photonView.RPC("SendMessage", RpcTarget.All);
-    }
-
-    IEnumerator FadeFiedl(InputField _obj)
+    IEnumerator FadeField(InputField _obj)
     {
         Color _initColor = new Color32(171, 171, 171, 255);
         Color _changedColor = new Color32(171, 80, 80, 255);
@@ -320,9 +290,46 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         print("참가 실패");
     }
 
+    /// <summary>
+    /// 시체 발견 또는 응급상황 발생 후 채팅창 활성화
+    /// </summary>
+    /// <param name="_isEmergency">응급상황 인지</param>
+    [PunRPC]
+    void OpenChatPannel(bool _isEmergency)
+    {
+        if (_isEmergency)
+        {
+            _emergencyInfoUI[0].SetActive(false);
+            _emergencyInfoUI[1].SetActive(true);
+            _emergency.UseEmergency(true);
+        }
+        else
+        {
+            _emergencyInfoUI[0].SetActive(true);
+            _emergencyInfoUI[1].SetActive(false);
+        }
+
+        AudioSource.PlayClipAtPoint(SoundManager.instance.seManager.EffectSounds[8], _player.transform.position);
+        for (int i = 0; i < _missionManager.GetComponent<MissionOpen>().MissionObj.Count; i++)
+        {
+            _missionManager.GetComponent<MissionOpen>().MissionObj[i].SetActive(false);
+        }
+
+        if (_missionManager.GetComponent<MissionOpen>().student != null)
+        {
+            _missionManager.GetComponent<MissionOpen>().PlayerCam.SetActive(true);
+            _missionManager.GetComponent<MissionOpen>().MissionCam.SetActive(false);
+        }
+        _chatPannel.SetActive(true);
+        _isOpenPannel = true;
+        _stateManager._gameState = StateManager.State.OnChatting;
+        _clickProfile.InitProfile();
+        _timer.Reset_Timer();
+        //Cursor.lockState = CursorLockMode.Confined;
+    }
+
 
     //------------------------------------------------------->  로비 관리
-
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         photonView.RPC("RenewalRoom", RpcTarget.AllBuffered);
@@ -338,18 +345,34 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetLoadImg", RpcTarget.AllBuffered, true);
-            StartCoroutine(LoadingGame1());
+            StartCoroutine(SetGame());
             photonView.RPC("Loading", RpcTarget.AllViaServer);
         }
+    }
+
+    /// <summary>
+    /// 게임 세팅
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator SetGame()
+    {
+        yield return new WaitForSeconds(1f);
+        photonView.RPC("PlayerStart", RpcTarget.AllBufferedViaServer);
+        yield return new WaitForSeconds(1f);
+        photonView.RPC("SetManager", RpcTarget.AllBufferedViaServer, true);
     }
 
     [PunRPC]
     private void Loading()
     {
-        StartCoroutine(LoadingGame2());
+        StartCoroutine(LoadGame());
     }
 
-    IEnumerator LoadingGame2()
+    /// <summary>
+    /// 게임 시작 이미지 호출
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator LoadGame()
     {
         yield return new WaitUntil (() => _roleManager.GetComponent<RoleManager>().mixList.Count == PhotonNetwork.CurrentRoom.PlayerCount && _roleManager.GetComponent<RoleManager>().mixList[_roleManager.GetComponent<RoleManager>().mixList.Count -1].layer != 0);
         //photonView.RPC("RoleIntroduce", RpcTarget.AllViaServer);
@@ -357,14 +380,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(3f);
         //photonView.RPC("SetLoadImg", RpcTarget.AllBuffered, false);
         SetLoadImg(false);
-    }
-
-    IEnumerator LoadingGame1()
-    {
-        yield return new WaitForSeconds(1f);
-        photonView.RPC("PlayerStart", RpcTarget.AllBufferedViaServer);
-        yield return new WaitForSeconds(1f);
-        photonView.RPC("SetManager", RpcTarget.AllBufferedViaServer,true);
     }
 
     [PunRPC]
@@ -386,7 +401,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
+    /// <summary>
+    /// 역할 소개 호출
+    /// </summary>
     void RoleIntroduce()
     {
         _roleIntroduce.SetActive(true);
@@ -429,6 +446,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         _startCam.GetComponent<AudioListener>().enabled = false;
     }
 
+    /// <summary>
+    /// 방 새로고침
+    /// </summary>
     [PunRPC]
     void RenewalRoom()
     {
@@ -445,22 +465,19 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    void LeftRoom()
-    {
-        for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
-        {
-            _currentUserList[i].text = PhotonNetwork.PlayerList[i].NickName;
-        }
-    }
-
+    /// <summary>
+    /// 재시작
+    /// </summary>
     public void ReStart()
     {
         PhotonNetwork.Disconnect();
         SceneManager.LoadScene(0);
     }
 
-    //------------------------------------------------------->  방 정보 확인
+    //------------------------------------------------------->  방 정보
+    /// <summary>
+    /// 방 정보 확인
+    /// </summary>
     [ContextMenu("방 정보")]
     void Info()
     {
