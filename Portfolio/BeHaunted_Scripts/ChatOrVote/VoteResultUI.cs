@@ -11,9 +11,6 @@ public class VoteResultUI : MonoBehaviour
     private bool _isArrest = false;
     private string _arrestUserName;
 
-    public bool IsArrest { get => _isArrest; set => _isArrest = value; }
-    public string ArrestUserName { get => _arrestUserName; set => _arrestUserName = value; }
-
     // Start is called before the first frame update
     public void OpenUI()
     {
@@ -37,5 +34,15 @@ public class VoteResultUI : MonoBehaviour
         yield return new WaitForSeconds(2f);
         gameObject.SetActive(false);
         _pannel.SetActive(false);
+    }
+
+    public void Arrest(bool arrest)
+    {
+        _isArrest = arrest;
+    }
+
+    public void SetArrestedUserName(string name)
+    {
+        _arrestUserName = name;
     }
 }

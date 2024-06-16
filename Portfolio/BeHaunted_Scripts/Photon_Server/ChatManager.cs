@@ -14,7 +14,7 @@ public class ChatTexts
     public Texture2D picture;
 }
 
-public class ChatManager : MonoBehaviourPunCallbacks 
+public class ChatManager : MonoBehaviourPunCallbacks
 {
     [SerializeField]
     private List<ChatTexts> _chatting;
@@ -36,12 +36,12 @@ public class ChatManager : MonoBehaviourPunCallbacks
 
     public void BtnSendMessage()
     {
-        if(_inputField.text == "")
+        if (_inputField.text == "")
         {
             return;
         }
 
-        _pv.RPC("SendMessage", RpcTarget.All,PhotonNetwork.NickName,_inputField.text,null);
+        _pv.RPC("SendMessage", RpcTarget.All, PhotonNetwork.NickName, _inputField.text, null);
         _pv.RPC("CreateMessageBox", RpcTarget.All);
         _inputField.text = "";
     }
@@ -54,7 +54,7 @@ public class ChatManager : MonoBehaviourPunCallbacks
     {
 
         int _lastChat = _chatting.Count - 1;
-        if(_chatting[_lastChat].userID == PhotonNetwork.NickName)
+        if (_chatting[_lastChat].userID == PhotonNetwork.NickName)
         {
             Chat(true, _chatting[_lastChat].chatText, _chatting[_lastChat].userID, null);
         }
@@ -77,7 +77,7 @@ public class ChatManager : MonoBehaviourPunCallbacks
     /// <param name="text">메시지 내용</param>
     /// <param name="user">이름</param>
     /// <param name="picture">프로필 이미지</param>
-    public void Chat(bool isSend, string text, string user, Texture2D picture) 
+    public void Chat(bool isSend, string text, string user, Texture2D picture)
     {
         if (text.Trim() == "") return;
 
@@ -133,31 +133,8 @@ public class ChatManager : MonoBehaviourPunCallbacks
             Area.UserImage.gameObject.SetActive(!isSame);
             Area.UserText.gameObject.SetActive(!isSame);
             Area.UserText.text = Area.User;
-            if(picture != null) Area.UserImage.sprite = Sprite.Create(picture, new Rect(0, 0, picture.width, picture.height), new Vector2(0.5f, 0.5f));
+            if (picture != null) Area.UserImage.sprite = Sprite.Create(picture, new Rect(0, 0, picture.width, picture.height), new Vector2(0.5f, 0.5f));
         }
-
-        /*
-        // 이전 것과 날짜가 다르면 날짜영역 보이기
-        if (LastArea != null && LastArea.Time.Substring(0, 10) != Area.Time.Substring(0, 10))
-        {
-            Transform CurDateArea = Instantiate(DateArea).transform;
-            CurDateArea.SetParent(ContentRect.transform, false);
-            CurDateArea.SetSiblingIndex(CurDateArea.GetSiblingIndex() - 1);
-
-            string week = "";
-            switch (t.DayOfWeek)
-            {
-                case DayOfWeek.Sunday: week = "일"; break;
-                case DayOfWeek.Monday: week = "월"; break;
-                case DayOfWeek.Tuesday: week = "화"; break;
-                case DayOfWeek.Wednesday: week = "수"; break;
-                case DayOfWeek.Thursday: week = "목"; break;
-                case DayOfWeek.Friday: week = "금"; break;
-                case DayOfWeek.Saturday: week = "토"; break;
-            }
-            CurDateArea.GetComponent<AreaScript>().DateText.text = t.Year + "년 " + t.Month + "월 " + t.Day + "일 " + week + "요일";
-        }
-        */
 
         Fit(Area.BoxRect);
         Fit(Area.AreaRect);

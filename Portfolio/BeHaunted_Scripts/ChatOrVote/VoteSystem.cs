@@ -28,9 +28,6 @@ public class VoteSystem : MonoBehaviour
     public int _modeCount;
     [SerializeField] private int _voteMemberCount;
 
-    public List<int> VoteList { get => _voteList; set => _voteList = value; }
-    public int VoteMemberCount { get => _voteMemberCount; set => _voteMemberCount = value; }
-
     // Start is called before the first frame update
     void OnEnable()
     {
@@ -39,6 +36,17 @@ public class VoteSystem : MonoBehaviour
         _voteMemberCount = PhotonNetwork.CurrentRoom.PlayerCount;
     }
 
+    public void AddVoteList(int num)
+    {
+        _voteList.Add(num);
+    }
+
+    public int ReduceVoteMemberCount()
+    {
+        return _voteMemberCount--;
+    }
+
+    // 투표를 가장 많이 받은 순으로 리스트 정렬 -> 가장 많이 받은 사람이 두 명 이상일 시 mode => 100 으로 구분 / 한 명이면 mode => 해당 플레이어 번호
     public int CalListMode()
     {
          var _mode01 = _voteList.GroupBy(v => v).OrderByDescending(g => g.Count()).First();
@@ -67,6 +75,10 @@ public class VoteSystem : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 한 명의 투표대상자가 결정되면 감옥행 후 진행 / 그렇지 않으면 위치 랜덤 스폰 후 다시 진행
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Arrest()
     {
         _voteList.Clear();
@@ -85,20 +97,20 @@ public class VoteSystem : MonoBehaviour
 
             for (int i = 0; i < _notArrestUserList.Count; i++)
             {
-                _notArrestUserList[i].transform.position = _roleManager.PlayerSpawnPoints[i];
+                _notArrestUserList[i].transform.position = _roleManager.GetPlayerPoint(i);
             }
 
-            _voteResult.GetComponent<VoteResultUI>().IsArrest = true;
-            _voteResult.GetComponent<VoteResultUI>().ArrestUserName = _arrestUser.GetComponent<PhotonView>().Controller.NickName;
+            _voteResult.GetComponent<VoteResultUI>().Arrest(true);
+            _voteResult.GetComponent<VoteResultUI>().SetArrestedUserName(_arrestUser.GetComponent<PhotonView>().Controller.NickName);
         }
         else
         {
             for (int i = 0; i < _roleManager.mixList.Count; i++)
             {
-                _roleManager.mixList[i].transform.position = _roleManager.PlayerSpawnPoints[i];
+                _roleManager.mixList[i].transform.position = _roleManager.GetPlayerPoint(i);
             }
 
-            _voteResult.GetComponent<VoteResultUI>().IsArrest = false;
+            _voteResult.GetComponent<VoteResultUI>().Arrest(false);
         }
 
         _voteResult.GetComponent<VoteResultUI>().OpenUI();

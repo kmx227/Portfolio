@@ -13,20 +13,23 @@ public class ResultUI : MonoBehaviour
 
     private bool _studentWin = false;
 
-    public bool StudentWin { get => _studentWin; set => _studentWin = value; }
+    public bool SetStudentResult(bool result)
+    {
+        return _studentWin = result;
+    }
 
     // Start is called before the first frame update
     private void OnEnable()
     {
         for (int i = 0; i < _roleManager.mixList.Count; i++)
         {
-            if (i < _roleManager.MaxGhostCount)
+            if (i < _roleManager.GetMaxGhostCount())
             {
                 _ghosts[i].text = _roleManager.mixList[i].GetComponent<PhotonView>().Controller.NickName;
             }
             else
             {
-                _students[i - _roleManager.MaxGhostCount].text = _roleManager.mixList[i].GetComponent<PhotonView>().Controller.NickName;
+                _students[i - _roleManager.GetMaxGhostCount()].text = _roleManager.mixList[i].GetComponent<PhotonView>().Controller.NickName;
             }
         }
 

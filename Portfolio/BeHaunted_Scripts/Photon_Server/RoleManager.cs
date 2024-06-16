@@ -13,7 +13,7 @@ public class RoleManager : MonoBehaviour
     [SerializeField]
     private Ghost ghostCS;
     public List<GameObject> mixList = new List<GameObject>();
-    [SerializeField] 
+    [SerializeField]
     private List<GameObject> _playerList = new List<GameObject>();
     [SerializeField]
     public List<GameObject> diePlayer = new List<GameObject>();
@@ -46,11 +46,7 @@ public class RoleManager : MonoBehaviour
 
     public PlayerRole playerRole;
 
-    public int StudentCount { get => _currentStudentCount; set => _currentStudentCount = value; }
-    public int MaxGhostCount { get => _maxGhostCount; set => _maxGhostCount = value; }
-    public List<Vector3> PlayerSpawnPoints { get => _playerSpawnPoints; set => _playerSpawnPoints = value; }
-    public List<GameObject> PlayerList { get => _playerList; set => _playerList = value; }
-    public int MaxStudentCount { get => _maxStudentCount; set => _maxStudentCount = value; }
+    public List<GameObject> PlayerList { get => _playerList; }
 
     [System.Serializable]
     public class Serialization<T>
@@ -80,7 +76,7 @@ public class RoleManager : MonoBehaviour
             MasterSendPlayerInfo();
         }
 
-        if(PhotonNetwork.CurrentRoom.PlayerCount > 5)
+        if (PhotonNetwork.CurrentRoom.PlayerCount > 5)
         {
             _maxGhostCount = 2;
         }
@@ -116,7 +112,7 @@ public class RoleManager : MonoBehaviour
                     _currentPlayers[j].transform.position = _playerSpawnPoints[i];
                     mixList.Add(_currentPlayers[j]);
                 }
-                else if(_currentPlayers[j].GetComponent<PhotonView>().ControllerActorNr == _playerNumList[i])
+                else if (_currentPlayers[j].GetComponent<PhotonView>().ControllerActorNr == _playerNumList[i])
                 {
                     _playerList.Add(_currentPlayers[j]);
                 }
@@ -145,6 +141,35 @@ public class RoleManager : MonoBehaviour
             mixList[_maxGhostCount + i].layer = 15;
             _currentStudentCount++;
         }
+    }
+
+    // 귀신의 수를 가져옴
+    public int GetMaxGhostCount()
+    {
+        return _maxGhostCount;
+    }
+
+    // 플레이어의 위치 정보를 가져옴
+    public Vector3 GetPlayerPoint(int index)
+    {
+        return _playerSpawnPoints[index];
+    }
+
+    // 현재 학생 수를 가져옴
+    public int GetCurrentStudentCount()
+    {
+        return _currentStudentCount;
+    }
+
+    /// <summary>
+    /// 현재 학생 수를 변경함
+    /// </summary>
+    /// <param name="count">1 이상이면 해당 수로 현재 학생 수를 변경 / 0이하의 수면 현재 학생 수 -1</param>
+    /// <returns></returns>
+    public int ReduceStudentCount(int count)
+    {
+        if(count > 0) return _currentStudentCount = count;
+        else return _currentStudentCount--;
     }
 
     //셔플

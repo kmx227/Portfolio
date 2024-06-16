@@ -9,7 +9,7 @@ public class Emergency : MonoBehaviour
     [SerializeField] private int _totalEmergencyCount = 2;
     [SerializeField] private int _currentEmergencyCount = 0;
 
-    public bool PermitEmergency { get => _permitEmergency; set => _permitEmergency = value; }
+    public bool PermitEmergency { get => _permitEmergency; }
 
     public void UseEmergency(bool _use)
     {

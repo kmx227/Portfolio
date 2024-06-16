@@ -11,8 +11,20 @@ public class SkillCoolTime : MonoBehaviour
 
     [SerializeField] private bool[] _OnCoolTime = new bool[3];
 
-    public bool[] OnCoolTime { get => _OnCoolTime; set => _OnCoolTime = value; }
-    public Image[] CoolTimeImage { get => _coolTimeImage; set => _coolTimeImage = value; }
+    public bool GetCoolTime(int index)
+    {
+        return _OnCoolTime[index];
+    }
+
+    public void ChangeActiveCoolTime(int index, bool active)
+    {
+        _OnCoolTime[index] = active;
+    }
+
+    public bool CheckFillAmount(int index) 
+    {
+        return _coolTimeImage[index].fillAmount > 0;
+    }
 
     public void ClickSkill(int _skillNum)
     {

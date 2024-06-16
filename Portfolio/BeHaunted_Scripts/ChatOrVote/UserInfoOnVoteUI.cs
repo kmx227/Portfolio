@@ -13,8 +13,6 @@ public class UserInfoOnVoteUI : MonoBehaviour
     [SerializeField]
     private RoleManager _roleManager;
 
-    public int UserNumInfo { get => _userNumInfo; }
-
     private void OnEnable()
     {
         for (int i = 0; i < _roleManager.PlayerList.Count; i++)
@@ -38,5 +36,10 @@ public class UserInfoOnVoteUI : MonoBehaviour
             this.gameObject.SetActive(false);
             return;
         }
+    }
+
+    public int GetUserNum()
+    {
+        return _userNumInfo;
     }
 }

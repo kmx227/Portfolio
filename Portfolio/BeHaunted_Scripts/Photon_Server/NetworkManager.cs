@@ -42,8 +42,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private bool _isOpenHelper;
     private bool _isOpenMap;
 
-    public bool IsOpenPannel { get => _isOpenPannel; set => _isOpenPannel = value; }
-    public GameObject Player { get => _player; set => _player = value; }
 
     void Awake()
     {
@@ -115,7 +113,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             }
         }
 
-        else if (Input.GetMouseButtonDown(0) && _player.layer != 29)
+        else if (Input.GetMouseButtonDown(0) && CheckPlayerIsDead() == false)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -126,7 +124,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                     if (!_mission.IsFinal)
                     {
                         print("시체 클릭");
-                        photonView.RPC("OpenChatPannel", RpcTarget.AllViaServer,false);
+                        photonView.RPC("OpenChatPannel", RpcTarget.AllViaServer, false);
                     }
                 }
             }
@@ -150,7 +148,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                         hit.collider.gameObject.GetComponent<Door>().IsOpen = false;
                     }
                 }
-                else if (hit.collider.gameObject.layer == 24 && hit.distance < 2f && _player.layer != 29)
+                else if (hit.collider.gameObject.layer == 24 && hit.distance < 2f && CheckPlayerIsDead() == false)
                 {
                     if (_emergency.PermitEmergency)
                     {
@@ -193,9 +191,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             _currentUserList[0].text = PhotonNetwork.LocalPlayer.NickName;
             //_lobby.SetActive(true);
         }
-        else if(_nickName.text == "")
+        else if (_nickName.text == "")
         {
-            StartCoroutine(FadeFiedl(_nickName));
+            StartCoroutine(FadeField(_nickName));
         }
     }
 
@@ -207,7 +205,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         string _num = "";
 
-        for(int i=0; i<4; i++)
+        for (int i = 0; i < 4; i++)
         {
             int _rand = Random.RandomRange(0, 10);
             string _randomNum = _rand.ToString();
@@ -229,11 +227,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             PhotonNetwork.LocalPlayer.NickName = _nickName.text;
             _roomNumText.text = _roomInput.text;
         }
-        else if(_nickName.text == "")
+        else if (_nickName.text == "")
         {
             StartCoroutine(FadeField(_nickName));
         }
-        else if(_roomInput.text == "")
+        else if (_roomInput.text == "")
         {
             StartCoroutine(FadeField(_roomInput));
         }
@@ -328,6 +326,22 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         //Cursor.lockState = CursorLockMode.Confined;
     }
 
+    /// <summary>
+    /// 패널 창 닫음
+    /// </summary>
+    public void ClosePannel()
+    {
+        _isOpenPannel = false;
+    }
+
+    /// <summary>
+    /// 플레이어가 죽어서 유령상태인지 체크
+    /// </summary>
+    /// <returns></returns>
+    public bool CheckPlayerIsDead()
+    {
+        return _player.layer == 29;
+    }
 
     //------------------------------------------------------->  로비 관리
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -374,7 +388,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     /// <returns></returns>
     IEnumerator LoadGame()
     {
-        yield return new WaitUntil (() => _roleManager.GetComponent<RoleManager>().mixList.Count == PhotonNetwork.CurrentRoom.PlayerCount && _roleManager.GetComponent<RoleManager>().mixList[_roleManager.GetComponent<RoleManager>().mixList.Count -1].layer != 0);
+        yield return new WaitUntil(() => _roleManager.GetComponent<RoleManager>().mixList.Count == PhotonNetwork.CurrentRoom.PlayerCount && _roleManager.GetComponent<RoleManager>().mixList[_roleManager.GetComponent<RoleManager>().mixList.Count - 1].layer != 0);
         //photonView.RPC("RoleIntroduce", RpcTarget.AllViaServer);
         RoleIntroduce();
         yield return new WaitForSeconds(3f);
@@ -442,7 +456,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     void PlayerStart()
     {
         _canvas.SetActive(false);
-        _player =  PhotonNetwork. Instantiate("Player", new Vector3(0, 0, 0), Quaternion.identity);
+        _player = PhotonNetwork.Instantiate("Player", new Vector3(0, 0, 0), Quaternion.identity);
         _startCam.GetComponent<AudioListener>().enabled = false;
     }
 
@@ -452,9 +466,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void RenewalRoom()
     {
-        for(int i=0; i < _currentUserList.Length; i++)
+        for (int i = 0; i < _currentUserList.Length; i++)
         {
-            if(i < PhotonNetwork.CurrentRoom.PlayerCount)
+            if (i < PhotonNetwork.CurrentRoom.PlayerCount)
             {
                 _currentUserList[i].text = PhotonNetwork.PlayerList[i].NickName;
             }
@@ -488,7 +502,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             print("현재 방 최대 인원 수 : " + PhotonNetwork.CurrentRoom.MaxPlayers);
 
             string _plyaerStr = "방에 있는 플레이어 목록 : ";
-            for(int i=0; i<PhotonNetwork.PlayerList.Length; i++)
+            for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
             {
                 _plyaerStr += PhotonNetwork.PlayerList[i].NickName + ",";
             }
